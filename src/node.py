@@ -1,3 +1,5 @@
+from typing import Any, Callable, Type
+
 class Node:
     """A node in a search tree. Contains a pointer to the parent (the node
     that this is a successor of) and to the actual state for this node. Note
@@ -8,12 +10,13 @@ class Node:
     an explanation of how the f and h values are handled. You will not need to
     subclass this class."""
 
-    def __init__(self, state, parent=None, action=None, path_cost=0):
+    def __init__(self, state, parent=None, action=None, path_cost=0, priority: Callable[[Type['Node']], Any] = None):
         """Create a search tree Node, derived from a parent by an action."""
         self.state = state
         self.parent = parent
         self.action = action
         self.path_cost = path_cost
+        self.priority = priority
         self.depth = 0
         if parent:
             self.depth = parent.depth + 1
@@ -22,7 +25,9 @@ class Node:
         return "<Node {}>".format(self.state)
 
     def __lt__(self, node):
-        return self.state < node.state
+        if not self.priority or not node.priority:
+            raise ValueError("Search tree node does not have a priority a.k.a. an evaluation function, to perform a best first search!")
+        return self.priority(self) < node.priority(node)
 
     def expand(self, problem):
         """List the nodes reachable in one step from this node."""
