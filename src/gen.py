@@ -81,7 +81,10 @@ class Gen:
                 else:
                     lrow_str += str(grid_num[j+size][i]) + '  '
             print(lrow_str)
-            
+        
+    @staticmethod
+    def gen_num(size):
+        return Gen.gen_grid_num(Gen.gen_grid(size))
         
 
 
