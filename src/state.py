@@ -11,8 +11,27 @@ class State:
             [ 0 for c in range(self.width) ]
             for r in range(self.height)
         ]
+        
         self.num = num or Gen.gen_num(size)
-        self.filled_squares = set()
+        
+        # additional state attributes
+        
+        # action-related states
+        self.level = 0                              # row to insert block
+        self.start = 0                              # col to insert block
+        self.block_id = 0                           # block to be inserted
+        
+        # validity
+        self.invalid = False                        # current grid state is invalid or not
+        
+    def row_blocks_at(self, index):
+        return self.num[index]
+    
+    def col_blocks_at(self, index):
+        return self.num[self.width + index]
+    
+    def current_block_size(self):
+        return self.row_blocks_at(self.level)[self.block_id]
     
     def out_of_range(self, row, col):
         if 0 <= row < self.width and 0 <= col <= self.height:
@@ -24,20 +43,55 @@ class State:
             raise Exception("Out of range")
         return self.grid[row][col] == 1
         
-    def fill(self, row, col):
+    # def fill(self, row, col):
+        
+    #     state = deepcopy(self)
+        
+    #     if self.out_of_range(row, col):
+    #         raise Exception("Out of range")
+    #     if self.filled(row, col):
+    #         raise Exception("Fill a filled cell")
+        
+    #     state.grid[row][col] = 1
+    #     return state
+    
+    def insert(self, row, col, size):
+        
+        # print(f"Inserting block {size} at {row}, {col}")
+        
+        if self.out_of_range(row, col) or self.out_of_range(row, col + size - 1):
+            raise Exception("Out of range")
         
         state = deepcopy(self)
         
-        if self.out_of_range(row, col):
-            raise Exception("Out of range")
-        if self.filled(row, col):
-            raise Exception("Fill a filled cell")
+        for i in range(col, col + size):
+            if self.filled(row, i):
+                raise Exception("Fill a filled cell")
+            state.grid[row][i] = 1
+            
+            # TODO: check column constraint (possible speed-up)
+            
+        # state switch
+        state.start = col + size + 1
         
-        state.grid[row][col] = 1
-        state.filled_squares.add((row, col))
+        state.block_id += 1
+        if state.block_id >= len(state.row_blocks_at(state.level)):
+            state.level += 1
+            state.start = 0
+            state.block_id = 0
+            
+        if state.start >= state.width:
+            state.level += 1
+            state.start = 0
+            state.block_id = 0
+            
+        if state.level >= state.height:
+            state.invalid = True
+            
         return state
     
     def test(self):
+        # print(f"Test state:\n {self}\n")
         return (self.num == Gen.gen_grid_num(self.grid))
     
     def __repr__(self) -> str:
