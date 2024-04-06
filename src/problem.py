@@ -30,7 +30,7 @@ class Problem:
         list, as specified in the constructor. Override this method if
         checking against a single self.goal is not enough."""
         if isinstance(self.goal, list):
-            return is_in(state, self.goal)
+            return state in self.goal
         else:
             return state == self.goal
 
