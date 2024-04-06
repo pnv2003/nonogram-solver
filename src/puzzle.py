@@ -3,16 +3,16 @@ from src.problem import Problem
 
 class Nonogram(Problem):
     
-    def __init__(self, initial=State(5, 5)):
+    def __init__(self, initial: State = None):
         
+        self.initial = initial or State()
         self.height = initial.height
         self.width = initial.width
-        self.initial = initial
         
         self.squares = {
             (row, col)
-            for row in initial.height
-            for col in initial.width
+            for row in range(initial.height)
+            for col in range(initial.width)
         }
         
     def actions(self, state: State):

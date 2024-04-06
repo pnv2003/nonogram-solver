@@ -1,14 +1,17 @@
 from copy import deepcopy
 
+from src.gen import Gen
+
 class State:
     
-    def __init__(self, height, width) -> None:
-        self.width = width
-        self.height = height
+    def __init__(self, size=5, num=None) -> None:
+        self.width = size
+        self.height = size
         self.grid = [
-            [ False for c in width ]
-            for r in height
+            [ 0 for c in range(self.width) ]
+            for r in range(self.height)
         ]
+        self.num = num or Gen.gen_num(size)
         self.filled_squares = set()
     
     def out_of_range(self, row, col):
@@ -19,23 +22,26 @@ class State:
     def filled(self, row, col):
         if self.out_of_range(row, col):
             raise Exception("Out of range")
-        return self.grid[row][col]
+        return self.grid[row][col] == 1
         
     def fill(self, row, col):
         
-        grid = deepcopy(self)
+        state = deepcopy(self)
         
         if self.out_of_range(row, col):
             raise Exception("Out of range")
         if self.filled(row, col):
             raise Exception("Fill a filled cell")
         
-        grid[row][col] = True
-        grid.filled_squares.add((row, col))
-        return grid
+        state.grid[row][col] = 1
+        state.filled_squares.add((row, col))
+        return state
     
     def test(self):
-        pass
+        return (self.num == Gen.gen_grid_num(self.grid))
+    
+    def __repr__(self) -> str:
+        return "<State>\n" + Gen.grid_str(self.grid) + "\n"
         
     
     

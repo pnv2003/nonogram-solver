@@ -56,10 +56,12 @@ class Gen:
         return grid_num
 
     @staticmethod
-    def print_grid(grid):
+    def grid_str(grid):
         size = len(grid)
         # for row in grid:
         #     print(row)
+        
+        gstr = ""
         
         grid_num = Gen.gen_grid_num(grid)
         for i in range(size):       
@@ -67,8 +69,10 @@ class Gen:
             row_str += "    "
             for j in grid_num[i]:
                 row_str += str(j) + ' '
-            print(row_str)
-        print("")
+            # print(row_str)
+            gstr += row_str + "\n"
+        # print("")
+        gstr += "\n"
         max_len = 0
         for i in range(size):
             if len(grid_num[i+size]) > max_len: max_len = len(grid_num[i+size])
@@ -80,11 +84,17 @@ class Gen:
                     lrow_str += '   '
                 else:
                     lrow_str += str(grid_num[j+size][i]) + '  '
-            print(lrow_str)
+            # print(lrow_str)
+            gstr += lrow_str + "\n"
+            
+        return gstr
         
     @staticmethod
     def gen_num(size):
-        return Gen.gen_grid_num(Gen.gen_grid(size))
+        grid = Gen.gen_grid(size)
+        print("Input:")
+        print(Gen.grid_str(grid))
+        return Gen.gen_grid_num(grid)
         
 
 

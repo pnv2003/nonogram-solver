@@ -1,5 +1,6 @@
 import heapq
 from typing import Any, Callable
+from src.debug import dump
 from src.problem import Problem
 from src.node import Node
 
@@ -10,11 +11,15 @@ def DFS(problem: Problem):
     reached = { problem.initial: node }
     
     while frontier:
+        # dump(frontier, "Frontier")
         node = frontier.pop()
+        # dump(node, "Got node")   
         if problem.goal_test(node.state):
             return node
         
         for child in node.expand(problem):
+            
+            # dump(child.state, "Consider...")
             if child.state not in reached:
                 reached[child.state] = child
                 frontier.append(child)
