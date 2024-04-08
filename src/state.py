@@ -23,6 +23,10 @@ class State:
         self.start = 0                              # col to insert block
         self.block_id = 0                           # block to be inserted
         
+        # custom level order
+        self.remaining_levels = set(range(self.height))
+        self.level_done = False
+        
         # validity
         self.invalid = False                        # current grid state is invalid or not
     
@@ -79,6 +83,21 @@ class State:
         if state.level >= state.height:
             state.invalid = True
             
+        return state
+    
+    def switch_level(self, level):
+        
+        if not self.level_done:
+            raise Exception("Unexpected Error: Switching from an undone level")
+        
+        state = deepcopy(self)
+        
+        state.level_done = False
+        state.remaining_levels.remove(state.level)
+        state.level = level
+        state.start = 0
+        state.block_id = state.row_num[level][0]
+        
         return state
     
     def test(self):
