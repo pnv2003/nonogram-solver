@@ -76,11 +76,6 @@ class State:
             state.start = 0
             state.block_id = 0
             
-        if state.start >= state.width:
-            state.level += 1
-            state.start = 0
-            state.block_id = 0
-            
         if state.level >= state.height:
             state.invalid = True
             
