@@ -13,6 +13,8 @@ class State:
         ]
         
         self.num = num or Gen.gen_num(size)
+        self.row_num = self.num[:self.height]
+        self.col_num = self.num[self.height:]
         
         # additional state attributes
         
@@ -23,18 +25,12 @@ class State:
         
         # validity
         self.invalid = False                        # current grid state is invalid or not
-        
-    def row_blocks_at(self, index):
-        return self.num[index]
-    
-    def col_blocks_at(self, index):
-        return self.num[self.width + index]
     
     def current_block_size(self):
         return self.row_blocks_at(self.level)[self.block_id]
     
     def out_of_range(self, row, col):
-        if 0 <= row < self.width and 0 <= col <= self.height:
+        if 0 <= row < self.height and 0 <= col <= self.width:
             return False
         return True
     
