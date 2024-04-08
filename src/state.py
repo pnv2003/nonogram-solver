@@ -86,7 +86,7 @@ class State:
         return (self.num == Gen.gen_grid_num(self.grid))
     
     def __repr__(self) -> str:
-        return "<State>\n" + Gen.grid_str(self.grid) + "\n"
+        return "\n" + Gen.grid_str(self.grid) + "\n"
         
     
     
