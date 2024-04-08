@@ -1,6 +1,75 @@
 from copy import deepcopy
-
+from src.debug import dump
 from src.gen import Gen
+import src.utils as utils
+
+class BlockState:
+    
+    def __init__(self, size, start=None, end=None) -> None:
+        """Block of `size` sit at [`start`, `end`)"""
+        
+        self.size = size
+        self.start = start
+        self.end = end
+        
+    def __repr__(self) -> str:
+        return "<Block size={} start={} end={}>".format(self.size, self.start, self.end)
+        
+class BlockListState:
+    
+    def __init__(self, space_size, block_sizes) -> None:
+        self.space_size = space_size
+        self.blocks = [
+            BlockState(sz)
+            for sz in block_sizes
+        ]
+        self.unpicked = set([
+            id
+            for id in range(len(block_sizes))
+        ])
+        self.count = 0
+        
+    def pick(self, id, start):
+        
+        if id not in self.unpicked:
+            raise Exception("Unexpected Error: Trying to pick a picked block")
+        
+        self.blocks[id].start = start
+        self.blocks[id].end = start + self.blocks[id].size
+        self.unpicked.remove(id)
+        self.count += 1
+        
+    def get_range(self, id):
+        
+        if id not in self.unpicked:
+            raise Exception("Unexpected Error: Trying to get range of a picked block")
+        
+        start, end = 0, self.space_size
+        # find start (go left)
+        for i in range(id - 1, -1, -1):
+            if i not in self.unpicked:
+                start = self.blocks[i].end + 1
+                break
+        # find end (go right)
+        for i in range(id + 1, len(self.blocks)):
+            if i not in self.unpicked:
+                end = self.blocks[i].start - 1
+                break
+        
+        if start >= end:
+            return []
+        
+        count = end - start - self.blocks[id].size + 1
+        end = start + count
+        
+        # print(f"Got range {start}-{end}")
+        return list(range(start, end))
+    
+    def get_unpicked_blocks(self):
+        return list(self.unpicked)
+        
+    def empty(self):
+        return self.count == len(self.blocks)
 
 class State:
     
@@ -13,28 +82,27 @@ class State:
         ]
         
         self.num = num or Gen.gen_num(size)
+        self.row_num = self.num[:self.height]
+        self.col_num = self.num[self.height:]
+            
+        # block-insertion state model
+        self.constraint_states = [  
+            BlockListState(self.width, sizes)
+            for sizes in self.row_num
+        ]
+        # track unsatisfied constraints
+        self.unsatisfied = set([ level for level in range(self.height) ])
         
-        # additional state attributes
+        self.current_column_numbers = [
+            [ 0 for j in range(self.height) ]
+            for i in range(self.width)
+        ]
         
-        # action-related states
-        self.level = 0                              # row to insert block
-        self.start = 0                              # col to insert block
-        self.block_id = 0                           # block to be inserted
-        
-        # validity
-        self.invalid = False                        # current grid state is invalid or not
-        
-    def row_blocks_at(self, index):
-        return self.num[index]
-    
-    def col_blocks_at(self, index):
-        return self.num[self.width + index]
-    
-    def current_block_size(self):
-        return self.row_blocks_at(self.level)[self.block_id]
+        # current grid state is invalid or not
+        self.invalid = False                        
     
     def out_of_range(self, row, col):
-        if 0 <= row < self.width and 0 <= col <= self.height:
+        if 0 <= row < self.height and 0 <= col < self.width:
             return False
         return True
     
@@ -42,51 +110,35 @@ class State:
         if self.out_of_range(row, col):
             raise Exception("Out of range")
         return self.grid[row][col] == 1
-        
-    # def fill(self, row, col):
-        
-    #     state = deepcopy(self)
-        
-    #     if self.out_of_range(row, col):
-    #         raise Exception("Out of range")
-    #     if self.filled(row, col):
-    #         raise Exception("Fill a filled cell")
-        
-    #     state.grid[row][col] = 1
-    #     return state
     
-    def insert(self, row, col, size):
+    def insert(self, level, block_id, pos):
         
-        # print(f"Inserting block {size} at {row}, {col}")
-        
-        if self.out_of_range(row, col) or self.out_of_range(row, col + size - 1):
-            raise Exception("Out of range")
-        
+        # print(f"Inserting a block level={level}, id={block_id}, pos={pos}")
         state = deepcopy(self)
         
-        for i in range(col, col + size):
-            if self.filled(row, i):
+        block_size = state.row_num[level][block_id]
+        
+        for i in range(pos, pos + block_size):
+            if state.filled(level, i):
                 raise Exception("Fill a filled cell")
-            state.grid[row][i] = 1
+            state.grid[level][i] = 1
             
             # TODO: check column constraint (possible speed-up)
+            if not utils.check_col_arr(
+                Gen.gen_grid_num_arr(state.current_column_numbers[i]), 
+                state.col_num[i]
+            ):
+                state.invalid = True
+                break
+            else:
+                state.current_column_numbers[i][level] = 1
+            
+        # dump(state.grid, "Grid")
             
         # state switch
-        state.start = col + size + 1
-        
-        state.block_id += 1
-        if state.block_id >= len(state.row_blocks_at(state.level)):
-            state.level += 1
-            state.start = 0
-            state.block_id = 0
-            
-        if state.start >= state.width:
-            state.level += 1
-            state.start = 0
-            state.block_id = 0
-            
-        if state.level >= state.height:
-            state.invalid = True
+        state.constraint_states[level].pick(block_id, pos)
+        if state.constraint_states[level].empty():
+            state.unsatisfied.remove(level)
             
         return state
     

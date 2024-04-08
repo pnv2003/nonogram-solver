@@ -15,21 +15,18 @@ class Nonogram(Problem):
         if state.invalid:
             return []
         
-        level = state.level
-        start = state.start
-        size = state.current_block_size()
-        
-        # Ex: Fit 2 -> # # . _ _ _ _
-        #                    ^ ^ ^
-        end = state.width - size
+        constraint = state.constraint_states
+        levels = list(state.unsatisfied)
         
         return [
-            Action(level, i, size)
-            for i in range(start, end + 1)
+            Action(level, id, pos)
+            for level in levels
+            for id in constraint[level].get_unpicked_blocks()
+            for pos in constraint[level].get_range(id)
         ]    
     
     def result(self, state: State, action: Action):
-        return state.insert(action.row, action.col, action.size)
+        return state.insert(action.level, action.block_id, action.pos)
     
     def goal_test(self, state: State):
         return state.test()
