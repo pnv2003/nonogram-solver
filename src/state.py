@@ -27,7 +27,7 @@ class State:
         self.invalid = False                        # current grid state is invalid or not
     
     def current_block_size(self):
-        return self.row_blocks_at(self.level)[self.block_id]
+        return self.row_num[self.level][self.block_id]
     
     def out_of_range(self, row, col):
         if 0 <= row < self.height and 0 <= col <= self.width:
@@ -71,7 +71,7 @@ class State:
         state.start = col + size + 1
         
         state.block_id += 1
-        if state.block_id >= len(state.row_blocks_at(state.level)):
+        if state.block_id >= len(state.row_num[state.level]):
             state.level += 1
             state.start = 0
             state.block_id = 0
