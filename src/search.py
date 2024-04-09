@@ -13,7 +13,7 @@ def DFS(problem: Problem):
     while frontier:
         # dump(frontier, "Frontier")
         node = frontier.pop()
-        # dump(node, "Got node")   
+        # dump(node.state, "Got node with state")  
         if problem.goal_test(node.state):
             return node
         

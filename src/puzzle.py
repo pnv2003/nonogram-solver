@@ -17,12 +17,16 @@ class Nonogram(Problem):
         if state.invalid:
             return []
         
-        if state.level_done:
+        if state.level_done or state.level is None:
             
-            return [
+            # print(f"Expanding state: {state}")
+            actions = [
                 Action(level, 0, 0) # only level are sent
-                for level in state.remaining_levels
+                for level in (state.remaining_levels - {state.level})
+                if state.row_num[level][0] != 0 # skip empty row
             ]
+            
+            return actions
         
         level = state.level
         start = state.start
@@ -39,8 +43,10 @@ class Nonogram(Problem):
     
     def result(self, state: State, action: Action):
         
-        if state.level_done:
-            return state.switch_level(action.row)
+        if state.level_done or state.level is None:
+            new = state.switch_level(action.row)
+            # print(f"New state: {new}")
+            return new
         
         return state.insert(action.row, action.col, action.size)
     
