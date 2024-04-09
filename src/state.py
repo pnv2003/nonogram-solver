@@ -30,7 +30,7 @@ class State:
         return self.row_num[self.level][self.block_id]
     
     def out_of_range(self, row, col):
-        if 0 <= row < self.height and 0 <= col <= self.width:
+        if 0 <= row < self.height and 0 <= col < self.width:
             return False
         return True
     
