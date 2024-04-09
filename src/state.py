@@ -20,6 +20,8 @@ class State:
         
         # action-related states
         self.level = 0                              # row to insert block
+        while self.level < self.height and self.row_num[self.level][0] == 0: # skip empty rows
+                self.level += 1
         self.start = 0                              # col to insert block
         self.block_id = 0                           # block to be inserted
         
@@ -73,6 +75,8 @@ class State:
         state.block_id += 1
         if state.block_id >= len(state.row_num[state.level]):
             state.level += 1
+            while state.level < state.height and state.row_num[state.level][0] == 0: # skip empty rows
+                state.level += 1
             state.start = 0
             state.block_id = 0
             
