@@ -22,7 +22,7 @@ class Nonogram(Problem):
             # print(f"Expanding state: {state}")
             actions = [
                 Action(level, 0, 0) # only level are sent
-                for level in (state.remaining_levels - {state.level})
+                for level in state.remaining_levels
                 if state.row_num[level][0] != 0 # skip empty row
             ]
             
@@ -43,12 +43,18 @@ class Nonogram(Problem):
     
     def result(self, state: State, action: Action):
         
+        new = None
         if state.level_done or state.level is None:
             new = state.switch_level(action.row)
-            # print(f"New state: {new}")
-            return new
-        
-        return state.insert(action.row, action.col, action.size)
+            new.prune = True # prune all other levels
+            # print("PRUNER")
+            # print(new)
+        else:
+            new = state.insert(action.row, action.col, action.size)
+            new.prune = False # stop pruning
+            # print("NON")
+            # print(new)
+        return new
     
     def goal_test(self, state: State):
         return state.test()

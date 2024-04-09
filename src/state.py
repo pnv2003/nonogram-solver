@@ -35,6 +35,9 @@ class State:
         
         # validity
         self.invalid = False                        # current grid state is invalid or not
+        
+        # support pruning
+        self.prune = False
     
     def current_block_size(self):
         return self.row_num[self.level][self.block_id]
@@ -95,15 +98,14 @@ class State:
         
         state = deepcopy(self)
         
-        if state.level is not None:
-            # print(f"Remove level {state.level}")
-            state.remaining_levels.remove(state.level)
-            # print(f"OK?: {state.remaining_levels}")
-        
+        state.remaining_levels.remove(level)
         state.level_done = False
         state.level = level
         state.start = 0
         state.block_id = 0
+        
+        # print(f"SWITCHER level={level}")
+        # print(state)
         
         return state
     
