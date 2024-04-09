@@ -6,7 +6,8 @@ def check_col_arr(curr:list, constr:list) -> bool:
             if curr[j] > constr[j]: 
                 check = False
                 break
-        curr.insert(0,0)
+        curr = [0] + curr
+        if check == True : return check
         if len(curr) > len(constr): return check
 
 
