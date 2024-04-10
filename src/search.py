@@ -42,6 +42,15 @@ def BeFS(problem: Problem, heuristic: Callable[[Node], Any]):
     
     while frontier:
         node = heapq.heappop(frontier)
+        if node.state.prune:
+            # print("Pruning...")
+            frontier = list(filter(
+                lambda node: not node.state.prune,
+                frontier
+            ))
+            # print(frontier)
+            
+        # dump(node.state, "Got node with state")  
         if problem.goal_test(node.state):
             return node
         
