@@ -14,12 +14,10 @@ def DFS(problem: Problem):
         # dump(frontier, "Frontier")
         node = frontier.pop()
         if node.state.prune:
-            # print("Pruning...")
             frontier = list(filter(
-                lambda node: not node.state.prune,
+                lambda item: not (item.parent == node.parent and item.state.prune),
                 frontier
             ))
-            # print(frontier)
             
         # dump(node.state, "Got node with state")  
         if problem.goal_test(node.state):
@@ -43,13 +41,11 @@ def BeFS(problem: Problem, heuristic: Callable[[Node], Any]):
     while frontier:
         node = heapq.heappop(frontier)
         if node.state.prune:
-            # print("Pruning...")
             frontier = list(filter(
-                lambda node: not node.state.prune,
+                lambda item: not (item.parent == node.parent and item.state.prune),
                 frontier
             ))
-            # print(frontier)
-            
+                        
         # dump(node.state, "Got node with state")  
         if problem.goal_test(node.state):
             return node

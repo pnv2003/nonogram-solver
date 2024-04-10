@@ -104,9 +104,6 @@ class State:
         state.start = 0
         state.block_id = 0
         
-        # print(f"SWITCHER level={level}")
-        # print(state)
-        
         return state
     
     def test(self):
