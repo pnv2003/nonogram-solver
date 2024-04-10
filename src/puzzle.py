@@ -36,6 +36,11 @@ class Nonogram(Problem):
         #                    ^ ^ ^
         end = state.width - size
         
+        # speed boost: end limitation
+        for id in range(state.block_id + 1, len(state.row_num[level])):
+            block = state.row_num[level][id]
+            end -= block + 1
+        
         return [
             Action(level, i, size)
             for i in range(start, end + 1)
