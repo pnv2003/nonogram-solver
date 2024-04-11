@@ -13,5 +13,5 @@ def check_col_arr(curr:list, constr:list) -> bool:
         if len(curr) > len(constr): return check
 
 def heuristic_level(node:Node):
-    piortity = max(Gen.gen_grid_num_arr(node.state.row_num[node.state.level]))
-    return piortity
+    piority = -max(node.state.row_num[node.state.level])
+    return piority
