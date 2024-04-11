@@ -37,9 +37,9 @@ class Nonogram(Problem):
         end = state.width - size
         
         # speed boost: end limitation
-        for id in range(state.block_id + 1, len(state.row_num[level])):
-            block = state.row_num[level][id]
-            end -= block + 1
+        # for id in range(state.block_id + 1, len(state.row_num[level])):
+        #     block = state.row_num[level][id]
+        #     end -= block + 1
         
         return [
             Action(level, i, size)
@@ -52,13 +52,9 @@ class Nonogram(Problem):
         if state.level_done or state.level is None:
             new = state.switch_level(action.row)
             new.prune = True # prune all other levels
-            # print("PRUNER")
-            # print(new)
         else:
             new = state.insert(action.row, action.col, action.size)
             new.prune = False # stop pruning
-            # print("NON")
-            # print(new)
         return new
     
     def goal_test(self, state: State):

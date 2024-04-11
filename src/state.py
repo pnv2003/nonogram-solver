@@ -28,10 +28,10 @@ class State:
         self.level_done = False
         
         # for fast checking column constraints
-        self.column_major_grid = [
-            [ 0 for r in range(self.height)]
-            for c in range(self.width)
-        ]
+        # self.column_major_grid = [
+        #     [ 0 for r in range(self.height)]
+        #     for c in range(self.width)
+        # ]
         
         # validity
         self.invalid = False                        # current grid state is invalid or not
@@ -68,16 +68,16 @@ class State:
             
             # TODO: check column constraint (possible speed-up)
             
-            current_num = Gen.gen_grid_num_arr(state.column_major_grid[i])
-            if not utils.check_col_arr(current_num, state.col_num[i]):
-                # print("Column constraint mismatch:")
-                # print(f"Column: {state.column_major_grid[i]}")
-                # print(f"Current: {current_num}")
-                # print(f"Constraint: {state.col_num[i]}\n")
+            # current_num = Gen.gen_grid_num_arr(state.column_major_grid[i])
+            # if not utils.check_col_arr(current_num, state.col_num[i]):
+            #     # print("Column constraint mismatch:")
+            #     # print(f"Column: {state.column_major_grid[i]}")
+            #     # print(f"Current: {current_num}")
+            #     # print(f"Constraint: {state.col_num[i]}\n")
                 
-                state.invalid = True
-            else:
-                state.column_major_grid[i][row] = 1
+            #     state.invalid = True
+            # else:
+            #     state.column_major_grid[i][row] = 1
             
         # state switch
         state.start = col + size + 1
