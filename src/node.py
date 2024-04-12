@@ -37,7 +37,7 @@ class Node:
     def child_node(self, problem, action):
         """[Figure 3.10]"""
         next_state = problem.result(self.state, action)
-        next_node = Node(next_state, self, action, problem.path_cost(self.path_cost, self.state, action, next_state))
+        next_node = Node(next_state, self, action, problem.path_cost(self.path_cost, self.state, action, next_state), self.priority)
         return next_node
 
     def solution(self):

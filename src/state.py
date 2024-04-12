@@ -19,20 +19,25 @@ class State:
         # additional state attributes
         
         # action-related states
-        self.level = 0                              # row to insert block
-        while self.level < self.height and self.row_num[self.level][0] == 0: # skip empty rows
-                self.level += 1
+        self.level = None                           # row to insert block
         self.start = 0                              # col to insert block
         self.block_id = 0                           # block to be inserted
         
+        # custom level order
+        self.remaining_levels = set(range(self.height))
+        self.level_done = False
+        
         # for fast checking column constraints
-        self.column_major_grid = [
-            [ 0 for r in range(self.height)]
-            for c in range(self.width)
-        ]
+        # self.column_major_grid = [
+        #     [ 0 for r in range(self.height)]
+        #     for c in range(self.width)
+        # ]
         
         # validity
         self.invalid = False                        # current grid state is invalid or not
+        
+        # support pruning
+        self.prune = False
     
     def current_block_size(self):
         return self.row_num[self.level][self.block_id]
@@ -46,27 +51,15 @@ class State:
         if self.out_of_range(row, col):
             raise Exception("Out of range")
         return self.grid[row][col] == 1
-        
-    # def fill(self, row, col):
-        
-    #     state = deepcopy(self)
-        
-    #     if self.out_of_range(row, col):
-    #         raise Exception("Out of range")
-    #     if self.filled(row, col):
-    #         raise Exception("Fill a filled cell")
-        
-    #     state.grid[row][col] = 1
-    #     return state
     
     def insert(self, row, col, size):
         
         # print(f"Inserting block {size} at {row}, {col}")
         
+        state = deepcopy(self)
+        
         if self.out_of_range(row, col) or self.out_of_range(row, col + size - 1):
             raise Exception("Out of range")
-        
-        state = deepcopy(self)
         
         for i in range(col, col + size):
             if self.filled(row, i):
@@ -74,39 +67,50 @@ class State:
             state.grid[row][i] = 1
             
             # TODO: check column constraint (possible speed-up)
-            current_num = Gen.gen_grid_num_arr(state.column_major_grid[i])
-            if not utils.check_col_arr(current_num, state.col_num[i]):
-                # print("Column constraint mismatch:")
-                # print(f"Column: {state.column_major_grid[i]}")
-                # print(f"Current: {current_num}")
-                # print(f"Constraint: {state.col_num[i]}\n")
+            
+            # current_num = Gen.gen_grid_num_arr(state.column_major_grid[i])
+            # if not utils.check_col_arr(current_num, state.col_num[i]):
+            #     # print("Column constraint mismatch:")
+            #     # print(f"Column: {state.column_major_grid[i]}")
+            #     # print(f"Current: {current_num}")
+            #     # print(f"Constraint: {state.col_num[i]}\n")
                 
-                state.invalid = True
-            else:
-                state.column_major_grid[i][row] = 1
+            #     state.invalid = True
+            # else:
+            #     state.column_major_grid[i][row] = 1
             
         # state switch
         state.start = col + size + 1
-        
         state.block_id += 1
+        
+        # reached new level
         if state.block_id >= len(state.row_num[state.level]):
-            state.level += 1
-            while state.level < state.height and state.row_num[state.level][0] == 0: # skip empty rows
-                state.level += 1
+            state.level_done = True
             state.start = 0
             state.block_id = 0
             
-        if state.level >= state.height:
-            state.invalid = True
-            
+        return state
+    
+    def switch_level(self, level):
+        
+        if not self.level_done and self.level is not None:
+            raise Exception("Unexpected Error: Switching from an undone level")
+        
+        state = deepcopy(self)
+        
+        state.remaining_levels.remove(level)
+        state.level_done = False
+        state.level = level
+        state.start = 0
+        state.block_id = 0
+        
         return state
     
     def test(self):
-        # print(f"Test state:\n {self}\n")
         return (self.num == Gen.gen_grid_num(self.grid))
     
     def __repr__(self) -> str:
-        return "\n" + Gen.grid_str(self.grid) + "\n"
+        return f"\n<State level={self.level} remain={self.remaining_levels}\n" + Gen.grid_str(self.grid) + "\n>\n"
         
     
     
