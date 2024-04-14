@@ -28,10 +28,10 @@ class State:
         self.level_done = False
         
         # for fast checking column constraints
-        # self.column_major_grid = [
-        #     [ 0 for r in range(self.height)]
-        #     for c in range(self.width)
-        # ]
+        self.column_major_grid = [
+            [ 0 for r in range(self.height)]
+            for c in range(self.width)
+        ]
         
         # validity
         self.invalid = False                        # current grid state is invalid or not
@@ -77,7 +77,7 @@ class State:
                 
             #     state.invalid = True
             # else:
-            #     state.column_major_grid[i][row] = 1
+            state.column_major_grid[i][row] = 1
             
         # state switch
         state.start = col + size + 1

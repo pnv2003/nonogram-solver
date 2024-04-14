@@ -13,5 +13,21 @@ def check_col_arr(curr:list, constr:list) -> bool:
         if len(curr) > len(constr): return check
 
 def heuristic_level(node:Node):
-    piority = -max(node.state.row_num[node.state.level])
-    return piority
+    priority = -max(node.state.row_num[node.state.level])
+    return priority
+
+def heuristic_col(node:Node):
+    state = node.state
+    action = node.action
+    last_bl_size = action.size
+    start_col = action.col
+    priority = -1
+    for i in range(last_bl_size):
+        if check_col_arr(Gen.gen_grid_num_arr(state.column_major_grid[start_col]),
+                      state.col_num[start_col]) == False:
+            priority = 1
+            break
+        start_col += 1
+
+    return priority*node.depth
+        
