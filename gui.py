@@ -1,10 +1,12 @@
-from operator import ne
 import time
 import tkinter as tk
+
+import psutil
 from src.gen import Gen
 from src.puzzle import Nonogram
-from src.search import DFS
+from src.search import DFS, BeFS
 from src.state import State
+from src.utils import heuristic_level
 NONOGRAM_BOARD_SIZE = 5
 DEFAULT_FONT = "TkDefaultFont"
 DEFAULT_BACKGROUND = "SystemButtonFace"
@@ -15,6 +17,7 @@ init = State(size=NONOGRAM_BOARD_SIZE, num=Gen.gen_grid_num(grid))
 puzzle = Nonogram(init)
 row_hints = init.row_num
 col_hints = init.col_num
+algo = "DFS"
 # ---
 
 # layout: window
@@ -34,6 +37,12 @@ frame_left.grid(row=0, column=0)
 frame_right.grid(row=0, column=1)
 
 # layout: state variables (left)
+frame_env = tk.Frame(master=frame_left)
+frame_algo = tk.Frame(master=frame_left)
+
+frame_env.grid(row=0, column=0, pady=20)
+frame_algo.grid(row=1, column=0, pady=20)
+
 states = [
     'level',
     'start',
@@ -45,11 +54,34 @@ states = [
 label_states = dict()
 
 for i, state in enumerate(states):
-    label_name = tk.Label(master=frame_left, text=state)
-    label_value = tk.Label(master=frame_left, text=getattr(init, state))
+    label_name = tk.Label(master=frame_env, text=state)
+    label_value = tk.Label(master=frame_env, text=getattr(init, state))
     label_name.grid(row=i, column=0, sticky="w", padx=10)
     label_value.grid(row=i, column=1, sticky="w", padx=10)
     label_states[state] = label_value
+    
+label_time = tk.Label(master=frame_env, text="time")
+label_time_value = tk.Label(master=frame_env, text="")
+label_mem = tk.Label(master=frame_env, text="memory")
+label_mem_value = tk.Label(master=frame_env, text="")
+
+label_time.grid(row=7, column=0, sticky="w", padx=10)
+label_time_value.grid(row=7, column=1, sticky="w", padx=10)
+label_mem.grid(row=8, column=0, sticky="w", padx=10)
+label_mem_value.grid(row=8, column=1, sticky="w", padx=10)
+
+def switch_algo():
+    global algo
+    if algo == "DFS":
+        algo = "BeFS"
+        button_algo["text"] = "BeFS"
+    else:
+        algo = "DFS"
+        button_algo["text"] = "DFS"
+        
+button_algo = tk.Button(master=frame_algo, text=algo, font=(DEFAULT_FONT, 25), command=switch_algo)
+button_algo.grid(row=0, column=0, ipadx=10, ipady=10)
+
 
 # layout: output and controller (right)
 frame_board = tk.Frame(master=frame_right)
@@ -176,7 +208,19 @@ def gen():
 
 def solve():
     global trace, index
-    node, trace = DFS(puzzle, trace=True)
+    
+    proc = psutil.Process()
+    start_time = time.time()
+    if algo == "DFS":
+        node, trace = DFS(puzzle, trace=True)
+    else:
+        node, trace = BeFS(puzzle, heuristic_level, trace=True)
+    end_time = time.time()
+    mem = proc.memory_info().rss / 1024**2
+    
+    label_time_value["text"] = f"{round(end_time - start_time, 6)} seconds"
+    label_mem_value["text"] = f"{round(mem, 6)} MB"
+    
     label_message["text"] = "Puzzle solved!"
     index = 0
     display(index)
@@ -196,7 +240,7 @@ def next(loop=False):
         display(index)
         
     if loop and index < len(trace) - 1:
-        window.after(500, next, True)
+        window.after(200, next, True)
     
 def skip():
     global index
