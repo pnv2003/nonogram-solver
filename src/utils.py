@@ -17,7 +17,8 @@ def check_col_arr(curr:list, constr:list) -> bool:
 def heuristic_level(node:Node):
     # priority = -max(node.state.row_num[node.state.level])
     row = node.state.row_num[node.state.level]
-    priority = -(sum(row)+(len(row)-1)) 
+    size = node.state.width
+    priority = (len(row) + 1) ** (size - (sum(row)+(len(row)-1)))
     return priority
 
 def heuristic_col(node:Node):
