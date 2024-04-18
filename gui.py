@@ -7,13 +7,24 @@ from src.puzzle import Nonogram
 from src.search import DFS, BeFS
 from src.state import State
 from src.utils import heuristic_level
-NONOGRAM_BOARD_SIZE = 5
+NONOGRAM_BOARD_SIZE = 7
 DEFAULT_FONT = "TkDefaultFont"
 DEFAULT_BACKGROUND = "SystemButtonFace"
 
 # ---
-grid = Gen.gen_grid(NONOGRAM_BOARD_SIZE)
-init = State(size=NONOGRAM_BOARD_SIZE, num=Gen.gen_grid_num(grid))
+grid = [
+    [1, 1, 1, 0, 1, 0, 1],
+    [1, 1, 1, 0, 1, 1, 0],
+    [0, 0, 1, 1, 1, 1, 1],
+    [1, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 1, 0, 0, 1],
+    [0, 1, 0, 0, 1, 0, 1],
+    [1, 0, 0, 1, 0, 0, 1],
+]
+
+# grid = Gen.gen_grid(NONOGRAM_BOARD_SIZE)
+# init = State(size=NONOGRAM_BOARD_SIZE, num=Gen.gen_grid_num(grid))
+init = State(size=7,num=Gen.gen_grid_num(grid))
 puzzle = Nonogram(init)
 row_hints = init.row_num
 col_hints = init.col_num
