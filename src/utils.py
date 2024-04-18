@@ -15,12 +15,10 @@ def check_col_arr(curr:list, constr:list) -> bool:
     return True
 
 def heuristic_level(node:Node):
-    
-    state = node.state
-    
-    if state.level_done:
-        row = state.row_num[node.state.level]
-        size = state.width
+        
+    if not node.parent or node.parent.state.level_done:
+        row = node.state.row_num[node.state.level]
+        size = node.state.width
         priority = (len(row) + 1) ** (size - (sum(row)+(len(row)-1)))
         return priority
 

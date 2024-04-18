@@ -181,7 +181,7 @@ def display(idx: int):
     
     # action    
     if not current.parent:
-        label_message["text"] = "Initial"
+        label_message["text"] = "Puzzle solved!"
     elif current.parent.state.level_done:
         label_message["text"] = f"Switch to level {current.action.row}"
     else:
