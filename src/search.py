@@ -4,39 +4,45 @@ from src.debug import dump
 from src.problem import Problem
 from src.node import Node
 
-def DFS(problem: Problem):
+def DFS(problem: Problem, trace=False) -> tuple[Node, dict]:
     
     node = Node(problem.initial)
     frontier = [node] # stack
     reached = { problem.initial: node }
+    if trace:
+        trace_lst = []
     
     while frontier:
-        # dump(frontier, "Frontier")
         node = frontier.pop()
         if node.state.prune:
             frontier = list(filter(
                 lambda item: not (item.parent == node.parent and item.state.prune),
                 frontier
             ))
-            
-        # dump(node.state, "Got node with state")  
+        
+        if trace:
+            trace_lst.append(node)
         if problem.goal_test(node.state):
+            if trace:
+                return node, trace_lst
             return node
         
         for child in node.expand(problem):
             
-            # dump(child.state, "Consider...")
             if child.state not in reached:
                 reached[child.state] = child
                 frontier.append(child)
-                
+    if trace:
+        return None, trace_lst
     return None
                 
-def BeFS(problem: Problem, heuristic: Callable[[Node], Any]):
+def BeFS(problem: Problem, heuristic: Callable[[Node], Any], trace=False):
     
     node = Node(problem.initial, priority=heuristic)
     frontier = [node] # priority queue
     reached = { problem.initial: node }
+    if trace:
+        trace_lst = []
     
     while frontier:
         node = heapq.heappop(frontier)
@@ -46,8 +52,11 @@ def BeFS(problem: Problem, heuristic: Callable[[Node], Any]):
                 frontier
             ))
                         
-        # dump(node.state, "Got node with state")  
+        if trace:
+            trace_lst.append(node)
         if problem.goal_test(node.state):
+            if trace:
+                return node, trace_lst
             return node
         
         for child in node.expand(problem):
@@ -55,5 +64,7 @@ def BeFS(problem: Problem, heuristic: Callable[[Node], Any]):
                 reached[child.state] = child
                 heapq.heappush(frontier, child)
     
+    if trace:
+        return None, trace_lst
     return None
     

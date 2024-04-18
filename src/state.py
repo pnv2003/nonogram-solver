@@ -25,7 +25,7 @@ class State:
         
         # custom level order
         self.remaining_levels = set(range(self.height))
-        self.level_done = False
+        self.level_done = True
         
         # for fast checking column constraints
         self.column_major_grid = [
