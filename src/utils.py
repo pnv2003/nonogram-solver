@@ -1,19 +1,23 @@
 from src.node import Node
 from src.gen import Gen
 def check_col_arr(curr:list, constr:list) -> bool:
-    num_of_list = len(constr) - len(curr) + 1
-    for i in range(num_of_list):
-        check = True
-        for j in range(i,len(curr)):
-            if curr[j] > constr[j]: 
-                check = False
-                break
-        curr = [0] + curr
-        if check == True : return check
-        if len(curr) > len(constr): return check
+    # num_of_list = len(constr) - len(curr) + 1
+    # for i in range(num_of_list):
+    #     check = True
+    #     for j in range(i,len(curr)):
+    #         if curr[j] > constr[j]: 
+    #             check = False
+    #             break
+    #     curr = [0] + curr
+    #     if check == True : return check
+    #     if len(curr) > len(constr): return check
+    if sum(curr) > sum(constr) : return False
+    return True
 
 def heuristic_level(node:Node):
-    priority = -max(node.state.row_num[node.state.level])
+    # priority = -max(node.state.row_num[node.state.level])
+    row = node.state.row_num[node.state.level]
+    priority = -(sum(row)+(len(row)-1)) 
     return priority
 
 def heuristic_col(node:Node):

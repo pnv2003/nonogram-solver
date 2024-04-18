@@ -27,11 +27,12 @@ class State:
         self.remaining_levels = set(range(self.height))
         self.level_done = False
         
+        # outdated
         # for fast checking column constraints
-        self.column_major_grid = [
-            [ 0 for r in range(self.height)]
-            for c in range(self.width)
-        ]
+        # self.column_major_grid = [
+        #     [ 0 for r in range(self.height)]
+        #     for c in range(self.width)
+        # ]
         
         # validity
         self.invalid = False                        # current grid state is invalid or not
@@ -39,6 +40,10 @@ class State:
         # support pruning
         self.prune = False
     
+        # column pruning
+        self.col_filled = [0 for c in range(self.width)]
+        self.col_filled_constr = [sum(c) for c in self.col_num ]
+
     def current_block_size(self):
         return self.row_num[self.level][self.block_id]
     
@@ -67,7 +72,7 @@ class State:
             state.grid[row][i] = 1
             
             # TODO: check column constraint (possible speed-up)
-            
+                #ver1    
             # current_num = Gen.gen_grid_num_arr(state.column_major_grid[i])
             # if not utils.check_col_arr(current_num, state.col_num[i]):
             #     # print("Column constraint mismatch:")
@@ -76,8 +81,19 @@ class State:
             #     # print(f"Constraint: {state.col_num[i]}\n")
                 
             #     state.invalid = True
+            #     # break
             # else:
-            state.column_major_grid[i][row] = 1
+            #     state.column_major_grid[i][row] = 1
+
+
+                #ver2
+            if (state.col_filled[i] + 1 > state.col_filled_constr[i]):
+                state.invalid = True
+            else:
+                state.col_filled[i] += 1
+
+
+
             
         # state switch
         state.start = col + size + 1
