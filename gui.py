@@ -220,17 +220,17 @@ def gen():
 def solve():
     global trace, index
     
-    proc = psutil.Process()
+    # proc = psutil.Process()
     start_time = time.time()
     if algo == "DFS":
         node, trace = DFS(puzzle, trace=True)
     else:
         node, trace = BeFS(puzzle, heuristic_level, trace=True)
     end_time = time.time()
-    mem = proc.memory_info().rss / 1024**2
+    # mem = proc.memory_info().rss / 1024**2
     
     label_time_value["text"] = f"{round(end_time - start_time, 6)} seconds"
-    label_mem_value["text"] = f"{round(mem, 6)} MB"
+    # label_mem_value["text"] = f"{round(mem, 6)} MB"
     
     label_message["text"] = "Puzzle solved!"
     index = 0

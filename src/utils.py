@@ -20,7 +20,6 @@ def heuristic_level(node:Node):
         row = node.state.row_num[node.state.level]
         size = node.state.width
         priority = (len(row) + 1) ** (size - (sum(row)+(len(row)-1)))
-        # priority = (len(row) + 1) ** (size - (sum(row)+(len(row)-1)))
         # return priority
         return -node.depth - 1 / priority
     return -node.depth
