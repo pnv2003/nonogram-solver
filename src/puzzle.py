@@ -20,9 +20,12 @@ class Nonogram(Problem):
         if state.level_done or state.level is None:
             
             # print(f"Expanding state: {state}")
+            
+            remains = list(state.remaining_levels)
+            remains.reverse()
             actions = [
                 Action(level, 0, 0) # only level are sent
-                for level in state.remaining_levels
+                for level in remains
                 if state.row_num[level][0] != 0 # skip empty row
             ]
             
@@ -43,7 +46,8 @@ class Nonogram(Problem):
         
         return [
             Action(level, i, size)
-            for i in range(start, end + 1)
+            # for i in range(start, end + 1)
+            for i in range(end, start - 1, -1)
         ]    
     
     def result(self, state: State, action: Action):
