@@ -11,4 +11,5 @@ A bot that utilizes the search problem model to solve Nonogram puzzles
 | Previous Step | Navigate to the previous step of the solution |
 | Next Step | Navigate to the next step of the solution |
 | Skip | Skip all the steps and see the solution (quickly :) |
+| DFS/BeFS | Switch the search algorithm |
 

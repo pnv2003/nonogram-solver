@@ -20,7 +20,7 @@ grid = [
         [1, 0, 1, 0, 1]
 ]
 
-grid = Gen.gen_grid(NONOGRAM_BOARD_SIZE)
+# grid = Gen.gen_grid(NONOGRAM_BOARD_SIZE)
 init = State(size=NONOGRAM_BOARD_SIZE, num=Gen.gen_grid_num(grid))
 puzzle = Nonogram(init)
 row_hints = init.row_num
