@@ -3,6 +3,14 @@ A bot that utilizes the search problem model to solve Nonogram puzzles
 
 # How to use the GUI
 
+Use the following command to get started:
+
+```bash
+git clone https://github.com/phuongngo0320/nonogram-ai
+cd nonogram-ai
+python gui.py
+```
+
 | Button | Feature |
 |-|-|
 | Generate | Generate new puzzle (not ready, restart the app to get a new one :D)
