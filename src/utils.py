@@ -1,3 +1,4 @@
+import math
 from src.node import Node
 from src.gen import Gen
 def check_col_arr(curr:list, constr:list) -> bool:
@@ -17,12 +18,14 @@ def check_col_arr(curr:list, constr:list) -> bool:
 def heuristic_level(node:Node):
     
     if node.parent.state.level_done:
-        row = node.state.row_num[node.state.level]
-        size = node.state.width
-        priority = (len(row) + 1) ** (size - (sum(row)+(len(row)-1)))
-        # return priority
-        return -node.depth - 1 / priority
-    return -node.depth
+        B = node.state.row_num[node.state.level]
+        S = len(B)
+        N = node.state.width
+        W = N - sum(B) - S + 1
+        C = math.comb(W + S, W)
+        return - node.depth - 1 / C
+    
+    return - node.depth
 
 def heuristic_col(node:Node):
     state = node.state
