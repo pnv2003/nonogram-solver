@@ -1,30 +1,27 @@
 import time
 import tkinter as tk
+import tracemalloc
 
-import psutil
 from src.gen import Gen
 from src.puzzle import Nonogram
 from src.search import DFS, BeFS
 from src.state import State
 from src.utils import heuristic_level
-NONOGRAM_BOARD_SIZE = 7
+NONOGRAM_BOARD_SIZE = 5
 DEFAULT_FONT = "TkDefaultFont"
 DEFAULT_BACKGROUND = "SystemButtonFace"
 
 # ---
 grid = [
-    [1, 1, 1, 0, 1, 0, 1],
-    [1, 1, 1, 0, 1, 1, 0],
-    [0, 0, 1, 1, 1, 1, 1],
-    [1, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 1, 0, 0, 1],
-    [0, 1, 0, 0, 1, 0, 1],
-    [1, 0, 0, 1, 0, 0, 1],
+        [1, 1, 1, 0, 0],
+        [0, 0, 0, 0, 1],
+        [1, 0, 0, 1, 1],
+        [0, 1, 0, 0, 1],
+        [1, 0, 1, 0, 1]
 ]
 
-# grid = Gen.gen_grid(NONOGRAM_BOARD_SIZE)
-# init = State(size=NONOGRAM_BOARD_SIZE, num=Gen.gen_grid_num(grid))
-init = State(size=7,num=Gen.gen_grid_num(grid))
+grid = Gen.gen_grid(NONOGRAM_BOARD_SIZE)
+init = State(size=NONOGRAM_BOARD_SIZE, num=Gen.gen_grid_num(grid))
 puzzle = Nonogram(init)
 row_hints = init.row_num
 col_hints = init.col_num
@@ -220,17 +217,23 @@ def gen():
 def solve():
     global trace, index
     
-    # proc = psutil.Process()
     start_time = time.time()
     if algo == "DFS":
         node, trace = DFS(puzzle, trace=True)
     else:
         node, trace = BeFS(puzzle, heuristic_level, trace=True)
     end_time = time.time()
-    # mem = proc.memory_info().rss / 1024**2
+    
+    tracemalloc.start()
+    if algo == "DFS":
+        node, trace = DFS(puzzle, trace=True)
+    else:
+        node, trace = BeFS(puzzle, heuristic_level, trace=True)
+    cur, mem = tracemalloc.get_traced_memory()
+    tracemalloc.stop()
     
     label_time_value["text"] = f"{round(end_time - start_time, 6)} seconds"
-    # label_mem_value["text"] = f"{round(mem, 6)} MB"
+    label_mem_value["text"] = f"{round(mem / 1024**2, 6)} MB"
     
     label_message["text"] = "Puzzle solved!"
     index = 0
