@@ -24,7 +24,13 @@ python gui.py
 | Skip | Skip all the steps and see the solution (quickly :) |
 | DFS/BeFS | Switch the search algorithm |
 
-We support 5x5 board only :)
+The default size of board is 5x5. You can customize it by modifying the following line:
+
+```py
+NONOGRAM_BOARD_SIZE = 5
+```
+
+We do not recommend playing with any board larger than 7x7 :)
 
 # Performance Testing
 
