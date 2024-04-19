@@ -1,13 +1,16 @@
-# nonogram-ai
-A bot that utilizes the search problem model to solve Nonogram puzzles
+# Searching Case Study: Nonogram
 
-# How to use the GUI
-
-Use the following command to get started:
+Clone this repository to get started!
 
 ```bash
 git clone https://github.com/phuongngo0320/nonogram-ai
 cd nonogram-ai
+```
+
+# How to use the GUI
+
+Start the GUI app by running `gui.py`:
+```bash
 python gui.py
 ```
 
@@ -20,4 +23,19 @@ python gui.py
 | Next Step | Navigate to the next step of the solution |
 | Skip | Skip all the steps and see the solution (quickly :) |
 | DFS/BeFS | Switch the search algorithm |
+
+We support 5x5 board only :)
+
+# Performance Testing
+
+Run `main.py` to check out the benchmarks (time and memory) of DFS (Depth First Search) and BeFS (Best First Search)
+```bash
+python main.py
+```
+
+There are six testcases for 5x5, 6x6 and 7x7 boards. After running the above command, the terminal will show the time and memory usage by DFS and BeFS. You can check out the files in `output` to see each step. 
+
+# Acknowledgements
+
+We are highly inspired by the AIMA books and AIMA Python code by Russell and Norvig.
 
