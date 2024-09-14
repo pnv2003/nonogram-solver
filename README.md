@@ -1,13 +1,6 @@
 # Searching Case Study: Nonogram
 
-Clone this repository to get started!
-
-```bash
-git clone https://github.com/phuongngo0320/nonogram-ai
-cd nonogram-ai
-```
-
-# How to use the GUI
+## How to use the GUI
 
 Start the GUI app by running `gui.py`:
 ```bash
@@ -32,7 +25,7 @@ NONOGRAM_BOARD_SIZE = 5
 
 We do not recommend playing with any board larger than 7x7 :)
 
-# Performance Testing
+## Performance Testing
 
 Run `main.py` to check out the benchmarks (time and memory) of DFS (Depth First Search) and BeFS (Best First Search)
 ```bash
@@ -41,7 +34,7 @@ python main.py
 
 There are six testcases for 5x5, 6x6 and 7x7 boards. After running the above command, the terminal will show the time and memory usage by DFS and BeFS. You can check out the files in `output` to see each step. 
 
-# Acknowledgements
+## Acknowledgements
 
-We are highly inspired by the AIMA books and AIMA Python code by Russell and Norvig.
+We are highly inspired by the AIMA books and the AIMA code implementation using Python by Russell and Norvig.
 
